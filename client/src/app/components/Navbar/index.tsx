@@ -16,5 +16,3 @@ const Navbar = () => {
 }
 
 export default Navbar;
-SunDim.displayName = 'SunDim';
-as
