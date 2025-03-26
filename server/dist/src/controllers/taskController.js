@@ -20,7 +20,7 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 projectId: Number(projectId),
             },
             include: {
-                project: true,
+                author: true,
                 assignee: true,
                 comments: true,
                 attachments: true,

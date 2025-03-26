@@ -14,7 +14,7 @@ export const getTasks = async (
         projectId: Number(projectId),
       },
       include: {
-        project: true,
+        author: true,
         assignee: true,
         comments: true,
         attachments: true,
