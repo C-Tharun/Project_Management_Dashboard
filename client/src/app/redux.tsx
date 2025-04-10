@@ -26,14 +26,14 @@ import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 /* REDUX PERSISTENCE */
 const createNoopStorage = () => {
   return {
-    getItem(_key: string) {
-      return Promise.resolve(null); // _key is a string
+    getItem(_key: any) {
+      return Promise.resolve(null);
     },
-    setItem(_key: string, value: unknown) {
-      return Promise.resolve(value); // _key is a string, value is unknown
+    setItem(_key: any, value: any) {
+      return Promise.resolve(value);
     },
-    removeItem(_key: string) {
-      return Promise.resolve(); // _key is a string
+    removeItem(_key: any) {
+      return Promise.resolve();
     },
   };
 };
