@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request, Response} from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -10,6 +10,7 @@ import taskRoutes from "./routes/taskRoutes";
 import searchRoutes from "./routes/searchRoutes";
 import userRoutes from "./routes/userRoutes";
 import teamRoutes from "./routes/teamRoutes";
+
 
 
 /* CONFIGURATIONS */
@@ -33,6 +34,7 @@ app.use("/tasks", taskRoutes);
 app.use("/search", searchRoutes);
 app.use("/users", userRoutes);
 app.use("/teams", teamRoutes);
+
 
 /* SERVER */
 const port = Number(process.env.PORT) || 3000;
