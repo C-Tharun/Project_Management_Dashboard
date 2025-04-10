@@ -14,48 +14,42 @@ Amplify.configure({
 });
 
 const formFields = {
-    signUp: {
-      username: {
-        order: 1,
-        placeholder: "Choose a username",
-        label: "Username",
-        isRequired: true,
-      },
-      email: {
-        order: 2,
-        placeholder: "Enter your email address",
-        label: "Email",
-        type: "email",
-        isRequired: true,
-      },
-      password: {
-        order: 3,
-        placeholder: "Enter your password",
-        label: "Password",
-        type: "password",
-        isRequired: true,
-      },
-      confirm_password: {
-        order: 4,
-        placeholder: "Confirm your password",
-        label: "Confirm Password",
-        type: "password",
-        isRequired: true,
-      },
+  signUp: {
+    username: {
+      order: 1,
+      placeholder: "Choose a username",
+      label: "Username",
+      isRequired: true,
     },
-  };
-  
-
-type MinimalAuthUser = {
-  username: string;
-  [key: string]: any;
+    email: {
+      order: 2,
+      placeholder: "Enter your email address",
+      label: "Email",
+      type: "email",
+      isRequired: true,
+    },
+    password: {
+      order: 3,
+      placeholder: "Enter your password",
+      label: "Password",
+      type: "password",
+      isRequired: true,
+    },
+    confirm_password: {
+      order: 4,
+      placeholder: "Confirm your password",
+      label: "Confirm Password",
+      type: "password",
+      isRequired: true,
+    },
+  },
 };
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <div>
       <Authenticator formFields={formFields}>
-        {({ user }: { user?: MinimalAuthUser }) =>
+        {({ user }) =>
           user ? (
             <div>{children}</div>
           ) : (
