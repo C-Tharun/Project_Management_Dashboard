@@ -100,7 +100,7 @@ endpoints: (build) => ({
           const session = await fetchAuthSession();
           if (!session) throw new Error ("No session found");
           const {userSub} = session;
-          const {accessToken} = session.tokens ?? {};
+          //const {accessToken} = session.tokens ?? {};
 
           const userDetailsResponse = await fetchwithBQ(`users/${userSub}`);
           const userDetails = userDetailsResponse.data as User;
@@ -108,9 +108,11 @@ endpoints: (build) => ({
           
           return { data: { user, userSub, userDetails } };
 
-        } catch (error: any){
-          return { error: error.message || "Could not fetch user data" };
-        }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} catch (error: any) {
+  return { error: error.message || "Could not fetch user data" };
+}
+
       }
     }),
     getProjects: build.query<Project[], void>({
