@@ -1,0 +1,54 @@
+name: Client CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'client/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'client/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./client
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './client/package-lock.json'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Lint
+      run: npm run lint
+    
+    - name: Build
+      run: npm run build
+      env:
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        NEXT_PUBLIC_AWS_REGION: ${{ secrets.NEXT_PUBLIC_AWS_REGION }}
+        NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_ID }}
+        NEXT_PUBLIC_USER_POOL_WEB_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_WEB_CLIENT_ID }}
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to Amplify
+      run: |
+        echo "Deployment will be handled by Amplify's automatic deployment"
+        # Amplify will automatically deploy when changes are pushed to the main branch 
