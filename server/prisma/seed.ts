@@ -51,8 +51,72 @@ async function main() {
       console.error(`Error seeding data for ${modelName}:`, error);
     }
   }
+
+  // Create a user
+  const user = await prisma.user.create({
+    data: {
+      email: 'test@example.com',
+      name: 'Test User',
+      password: 'password123', // In a real app, this would be hashed
+    },
+  });
+
+  // Create a team
+  const team = await prisma.team.create({
+    data: {
+      name: 'Development Team',
+      description: 'Main development team',
+      members: {
+        create: {
+          userId: user.id,
+          role: 'DEVELOPER',
+        },
+      },
+    },
+  });
+
+  // Create a project
+  const project = await prisma.project.create({
+    data: {
+      name: 'Project Management System',
+      description: 'A system to manage projects and tasks',
+      teamId: team.id,
+    },
+  });
+
+  // Create tasks with different statuses
+  await prisma.task.createMany({
+    data: [
+      {
+        title: 'Implement user authentication',
+        description: 'Add login and registration functionality',
+        status: 'todo',
+        projectId: project.id,
+        assignedToId: user.id,
+      },
+      {
+        title: 'Create project dashboard',
+        description: 'Design and implement the main dashboard',
+        status: 'in-progress',
+        projectId: project.id,
+        assignedToId: user.id,
+      },
+      {
+        title: 'Set up database',
+        description: 'Configure database and initial schema',
+        status: 'done',
+        projectId: project.id,
+        assignedToId: user.id,
+      },
+    ],
+  });
 }
 
 main()
-  .catch((e) => console.error(e))
-  .finally(async () => await prisma.$disconnect());
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
