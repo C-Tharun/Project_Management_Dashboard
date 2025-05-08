@@ -1,0 +1,49 @@
+---
+- name: Create monitoring directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - /etc/prometheus
+    - /etc/grafana/provisioning/datasources
+    - /etc/grafana/provisioning/dashboards
+
+- name: Copy Prometheus configuration
+  copy:
+    src: ../../../prometheus/prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    mode: '0644'
+
+- name: Copy Grafana datasource configuration
+  copy:
+    src: ../../../grafana/provisioning/datasources/datasources.yml
+    dest: /etc/grafana/provisioning/datasources/datasources.yml
+    mode: '0644'
+
+- name: Start Prometheus container
+  docker_container:
+    name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - /etc/prometheus:/etc/prometheus
+    restart_policy: always
+    state: started
+
+- name: Start Grafana container
+  docker_container:
+    name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    volumes:
+      - /etc/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    restart_policy: always
+    state: started 

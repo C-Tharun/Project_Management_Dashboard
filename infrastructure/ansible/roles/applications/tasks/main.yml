@@ -1,0 +1,82 @@
+---
+- name: Install Node.js and npm
+  apt:
+    name:
+      - nodejs
+      - npm
+    state: present
+    update_cache: yes
+
+- name: Install PostgreSQL
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+    state: present
+    update_cache: yes
+
+- name: Start and enable PostgreSQL service
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Start and enable Nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Create application directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - /var/www/project-management
+    - /var/www/project-management/server
+    - /var/www/project-management/client
+
+- name: Copy Nginx configuration
+  copy:
+    src: ../../../nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    mode: '0644'
+  notify: restart nginx
+
+- name: Copy application files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  with_items:
+    - { src: ../../../server/package.json, dest: /var/www/project-management/server/package.json }
+    - { src: ../../../client/package.json, dest: /var/www/project-management/client/package.json }
+
+- name: Install server dependencies
+  npm:
+    path: /var/www/project-management/server
+    state: present
+
+- name: Install client dependencies
+  npm:
+    path: /var/www/project-management/client
+    state: present
+
+- name: Build client application
+  command: npm run build
+  args:
+    chdir: /var/www/project-management/client
+
+- name: Start server application
+  command: npm start
+  args:
+    chdir: /var/www/project-management/server
+  async: yes
+  poll: 0 

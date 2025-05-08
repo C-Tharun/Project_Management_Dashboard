@@ -1,0 +1,34 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install basic packages
+  apt:
+    name:
+      - curl
+      - git
+      - htop
+      - vim
+      - net-tools
+      - python3-pip
+    state: present
+
+- name: Set timezone
+  timezone:
+    name: UTC
+
+- name: Configure system limits
+  pam_limits:
+    domain: '*'
+    limit_type: 'soft'
+    limit_item: 'nofile'
+    value: '65536'
+
+- name: Configure system limits for hard limit
+  pam_limits:
+    domain: '*'
+    limit_type: 'hard'
+    limit_item: 'nofile'
+    value: '65536' 

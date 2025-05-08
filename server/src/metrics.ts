@@ -3,6 +3,23 @@ import { register, Counter, Gauge, Histogram } from 'prom-client';
 // Create a registry to hold metrics
 const registry = register;
 
+// Add default metrics (process metrics)
+register.setDefaultLabels({
+  app: 'project-management-api'
+});
+register.registerMetric(new Gauge({
+  name: 'nodejs_version_info',
+  help: 'Node.js version info',
+  labelNames: ['version', 'major', 'minor', 'patch'],
+  collect() {
+    const [version, major, minor, patch] = process.version
+      .slice(1)
+      .split('.')
+      .map(Number);
+    this.set({ version: process.version, major, minor, patch }, 1);
+  },
+}));
+
 // Define metrics
 const httpRequestDuration = new Histogram({
   name: 'http_request_duration_seconds',
